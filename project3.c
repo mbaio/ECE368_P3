@@ -143,7 +143,7 @@ int main(int argc, char ** argv)
   return 0;
 }
 
-void display_queries(List ** list,float S, float alpha, int users, int node_query)
+void display_queries(List_network ** list,float S, float alpha, int users, int node_query)
 {
   
   

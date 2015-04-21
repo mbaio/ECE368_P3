@@ -11,7 +11,8 @@
 typedef struct linky
 {
   int ID;
-  float friendship_dist;
+  float friendship_dist_1;
+  float friendship_dist_2;
   struct linky * next;
 } List_network;
 
@@ -39,6 +40,7 @@ void avg_2nd_5(List_network **, int);
 char * * explode(const char *, const char *, int *);
 List_network * create_network(int, float);
 void List_push(List_network * head, int id, float UL);
+void display_queries(List_network **,float, float,int,int);
 
 
 int main(int argc, char ** argv)
@@ -124,22 +126,29 @@ int main(int argc, char ** argv)
        List_push(list[ind],user_arr[ind2].ID,UL);
     }
   }
-  List_network * list_ptr;
-  for(ind = 0; ind < users; ind++)
-  {
-    list_ptr = list[ind];
-    printf("\nUser: %d",list[ind]->ID);
-    list_ptr = list_ptr -> next;
-    while (list_ptr != NULL)
-    { 
-      printf("\n\tNeighbor: %d\tDistance: %f",list_ptr->ID,list_ptr->friendship_dist);
-      list_ptr = list_ptr -> next;
-    }
-  }
-  
-  
+  float s_dense;
+  float s_sparse;
+  if (S1 <= S2) {
+    s_dense = S1;
+    s_sparse = S2; }
+  else {
+    s_dense = S2;
+    s_sparse = S1; }
+    
+  printf("\nDisplaying Queries 1-6 for a Dense representation of this Social Network...\n");
+  display_queries(List,s_dense, alpha, users, node_query);
+  printf("\nDisplaying Queries 1-6 for a Sparse representation of this Social Network...\n");
+  display_queries(list,s_sparse, alpha, users, node_query);
   
   return 0;
+}
+
+void display_queries(List ** list,float S, float alpha, int users, int node_query)
+{
+  
+  
+  
+  
 }
 
 void List_push(List_network * head, int id, float UL)
@@ -160,7 +169,8 @@ List_network * create_network(int ID, float dist)
 {
   List_network * node = malloc(sizeof(List_network));
   node -> ID = ID;
-  node -> friendship_dist = dist;
+  node -> friendship_dist_1 = dist;
+  node -> friendship_dist_2 = 0;
   node -> next = NULL;
   return node;
 }

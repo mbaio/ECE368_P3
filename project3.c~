@@ -11,7 +11,8 @@
 typedef struct linky
 {
   int ID;
-  int friendship_dist;
+  float friendship_dist_1;
+  float friendship_dist_2;
   struct linky * next;
 } List_network;
 
@@ -124,6 +125,7 @@ int main(int argc, char ** argv)
        List_push(list[ind],user_arr[ind2].ID,UL);
     }
   }
+  
   List_network * list_ptr;
   for(ind = 0; ind < users; ind++)
   {
@@ -132,7 +134,8 @@ int main(int argc, char ** argv)
     list_ptr = list_ptr -> next;
     while (list_ptr != NULL)
     { 
-      printf("\n\tNeighbor: %d\tDistance: %f",list_ptr->ID,list_ptr->friendship_dist);
+      //if (list_ptr -> friendship_dist <
+      printf("\n\tNeighbor: %d\tDistance: %f",list_ptr->ID,list_ptr->friendship_dist_1);
       list_ptr = list_ptr -> next;
     }
   }
@@ -160,8 +163,8 @@ List_network * create_network(int ID, float dist)
 {
   List_network * node = malloc(sizeof(List_network));
   node -> ID = ID;
-  node -> friendship_dist = dist;
-  printf("\nadded %f",dist);
+  node -> friendship_dist_1 = dist;
+  node -> friendship_dist_2 = 0;
   node -> next = NULL;
   return node;
 }

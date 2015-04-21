@@ -64,9 +64,6 @@ int main(int argc, char ** argv)
   }
   free(exploded_line);
   
-  int user_index = 0;
-  User * user_arr = malloc(sizeof(User) * users);
-  List_network ** = malloc(sizeof(List_network *) * users);
   
   // Getting User ID's
   while (fgets(line,bufflen,fptr) != NULL)

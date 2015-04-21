@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 
 #define bufflen 1000
@@ -10,7 +11,7 @@
 typedef struct linky
 {
   int ID;
-  int friendship_dist;
+  float friendship_dist;
   struct linky * next;
 } List_network;
 
@@ -37,6 +38,7 @@ void avg_deg_4(List_network **, int);
 void avg_2nd_5(List_network **, int);
 char * * explode(const char *, const char *, int *);
 List_network * create_network(int, float);
+void List_push(List_network * head, int id, float UL);
 
 
 int main(int argc, char ** argv)
@@ -104,8 +106,10 @@ int main(int argc, char ** argv)
   {
     List_network * node = create_network(user_arr[ind].ID,0);
     list[ind] = node;
-    for (ind2 = 0; ind < users; ind++)
+    
+    for (ind2 = 0; ind2 < users; ind2++)
     {
+       sum = 0;
        sum += pow(user_arr[ind].age - user_arr[ind2].age,2);
        sum += pow(user_arr[ind].gender - user_arr[ind2].gender,2);
        sum += pow(user_arr[ind].martial - user_arr[ind2].martial,2);
@@ -117,15 +121,39 @@ int main(int argc, char ** argv)
        UL = sqrt(sum);
        if (Lmax < UL)
 	 Lmax = UL;
-       node = create_network(user_arr[ind2].ID,UL);
-       list[ind] -> next = node;
-       
+       List_push(list[ind],user_arr[ind2].ID,UL);
     }
-  
+  }
+  List_network * list_ptr;
+  for(ind = 0; ind < users; ind++)
+  {
+    list_ptr = list[ind];
+    printf("\nUser: %d",list[ind]->ID);
+    list_ptr = list_ptr -> next;
+    while (list_ptr != NULL)
+    { 
+      printf("\n\tNeighbor: %d\tDistance: %f",list_ptr->ID,list_ptr->friendship_dist);
+      list_ptr = list_ptr -> next;
+    }
+  }
   
   
   
   return 0;
+}
+
+void List_push(List_network * head, int id, float UL)
+{
+        List_network * addnode = create_network(id,UL);
+        List_network * finder = head;
+	while (1) {
+	  if (finder -> next == NULL)
+	  {
+	    finder -> next = addnode;
+	    break;
+	  }
+	  finder = finder -> next;
+	}
 }
 
 List_network * create_network(int ID, float dist)

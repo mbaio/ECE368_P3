@@ -64,28 +64,61 @@ int main(int argc, char ** argv)
   }
   free(exploded_line);
   
+  int user_index = 0;
+  User * user_arr = malloc(sizeof(User) * users);
+  List_network ** list = malloc(sizeof(List_network *) * users);
   
   // Getting User ID's
   while (fgets(line,bufflen,fptr) != NULL)
   {
     exploded_line = explode(line,delims,&arr_len);
-    int ID = atoi(exploded_line[0]);
-    int age = atoi(exploded_line[1]);
-    int gender = atoi(exploded_line[2]);
-    int martial = atoi(exploded_line[3]);
-    int race = atoi(exploded_line[4]);
-    int birth = atoi(exploded_line[5]);
-    int lang = atoi(exploded_line[6]);
-    int occ = atoi(exploded_line[7]);
-    int income = atoi(exploded_line[8]);
-    
+    user_arr[user_index].ID = atoi(exploded_line[0]);
+    user_arr[user_index].age = atoi(exploded_line[1]);
+    user_arr[user_index].gender = atoi(exploded_line[2]);
+    user_arr[user_index].martial = atoi(exploded_line[3]);
+    user_arr[user_index].race = atoi(exploded_line[4]);
+    user_arr[user_index].birth = atoi(exploded_line[5]);
+    user_arr[user_index].lang = atoi(exploded_line[6]);
+    user_arr[user_index].occ = atoi(exploded_line[7]);
+    user_arr[user_index].income = atoi(exploded_line[8]);
+    for (ind = 0; ind < 9; ind++)
+    {
+      free(exploded_line[ind]);
+    }
+    free(exploded_line); 
+    user_index++;
+  }
+  for(ind = 0; ind < users; ind++)
+  {
+    printf("ID: %d, age: %d, gender: %d, martial: %d, race: %d, birth: %d, lang: %d, occ: %d, income: %d\n", user_arr[ind].ID,user_arr[ind].age,user_arr[ind].gender,user_arr[ind].martial,user_arr[ind].race,user_arr[ind].birth,user_arr[ind].lang,user_arr[ind].occ,user_arr[ind].income);
+  }
+  printf("\n");
   
-  
+  // Build Network
+  int sum = 0;
+  int ind2;
+  float UL;
+  float Lmax = 0;
+  float friendship_dist;
+  for (ind = 0; ind < users; ind++)
+  {
+    for (ind2 = 0; ind < users; ind++)
+    {
+       sum +=
   
   
   
   
   return 0;
+}
+
+List_network * create_network(int ID, float dist)
+{
+  List_network * node = malloc(sizeof(List_network));
+  node -> ID = ID;
+  node -> friendship_dist = dist;
+  node -> next = NULL;
+  return node;
 }
 
 

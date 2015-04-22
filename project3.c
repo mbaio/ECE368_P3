@@ -6,7 +6,7 @@
 #include <math.h>
 
 
-#define bufflen 1000
+#define BUFFLEN 100
 
 typedef struct linky
 {
@@ -31,21 +31,26 @@ typedef struct users
 
 char * * explode(const char *, const char *, int *);
 void display_queries(User_el **,double, double,int,int,double);
+void dijkstras(int, double, User_el **,double,int,int *,int);
+int find_id(User_el ** graph_grid, int ID, int);
+int cmpfnc(const void * a,const void * b);
 
 
-int main(int argc, char ** argv)
+
+
+  int main(int argc, char ** argv)
 {
   int ind;
   FILE * fptr = fopen(argv[1],"r");
   if (fptr == NULL)
     return EXIT_FAILURE;
   int arr_len;
-  char * line = malloc(sizeof(char) * bufflen);
+  char * line = malloc(sizeof(char) * BUFFLEN);
   char * delims = ",";
   char ** exploded_line;
   
   // Getting Starting info
-  fgets(line,bufflen,fptr);
+  fgets(line,BUFFLEN,fptr);
   
   exploded_line = explode(line,delims,&arr_len);
   int users = atoi(exploded_line[0]);
@@ -65,7 +70,7 @@ int main(int argc, char ** argv)
   User_el ** graph_grid = malloc(sizeof(User_el *) * users);
   
   // Getting User ID's
-  while (fgets(line,bufflen,fptr))
+  while (fgets(line,BUFFLEN,fptr))
   {
     exploded_line = explode(line,delims,&arr_len);
     user_arr[user_index].ID = atoi(exploded_line[0]);
@@ -170,7 +175,7 @@ void display_queries(User_el ** graph_grid,double S, double alpha, int users, in
   printf("\n\n");
   
   //Query #1
-  printf("\n===== Query #1 ======\n");
+  printf("\n========= Query #1 ==========\n");
   User_el * node_list = malloc(sizeof(User_el) * users);
   double shortest_dist = 10000000000;
   int id_ind;
@@ -180,7 +185,7 @@ void display_queries(User_el ** graph_grid,double S, double alpha, int users, in
     if (graph_grid[id_ind][0].ID == node_query)
       break;
   }
-  for(ind = 0; ind < users; ind++)
+  for(ind = 1; ind < users + 1; ind++)
   {
     if (graph_grid[id_ind][ind].friendship_dist != -1 && shortest_dist > graph_grid[id_ind][ind].friendship_dist)
     {
@@ -191,19 +196,84 @@ void display_queries(User_el ** graph_grid,double S, double alpha, int users, in
     }
   }
   printf("\nShortest Distance: %lf\n",shortest_dist);
-  for(ind = 0; ind < users; ind++)
+  for(ind = 1; ind < users + 1; ind++)
   {
     if (graph_grid[id_ind][ind].friendship_dist == shortest_dist)
     {
       printf("\tID: %d\n",graph_grid[id_ind][ind].ID);
     }
   }
-  printf("\n\n");
+  printf("\n");
+  
+  printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
+  int count = 0;
+  int node_list2[BUFFLEN] = {0};
+  dijkstras(users, 0, graph_grid,alpha,id_ind,node_list2,0);
+  
+  for(ind = 0; ind < BUFFLEN; ind++)
+  {
+    printf("\nind = %d el = %d",ind,node_list2[ind]);
+  }
+  
+  
+  qsort(node_list2,BUFFLEN,sizeof(int),cmpfnc);
+  int current = node_list2[0];
+  printf("\n\nFirst element of id list: %d",node_list2[0]);
+  int new;
+  for(ind = 1; ind < BUFFLEN; ind++)
+  {
+    new = node_list2[ind];
+    if(current != new){
+      count++;
+      current = new; }
+    printf("\nind = %d el = %d",ind,node_list2[ind]);
+    if (node_list2[ind] == 0)
+      break;
+    
+    
+  }
+  printf("\tCount = %d\n\n",count);
+  
       
   return;
 }
 
+int cmpfnc(const void * a,const void * b)
+{
+  return(*(int *)b - *(int*)a );
+}
 
+void dijkstras(int users, double start, User_el ** graph_grid, double alpha, int id_ind, int * id_list, int node_ind)
+{
+  int ind;
+  int count = 0;
+  int send_id;
+  for (ind = 1; ind < users + 1; ind++)
+  {
+    if (start + graph_grid[id_ind][ind].friendship_dist < alpha && graph_grid[id_ind][ind].friendship_dist != -1) {
+      printf("\nStarted at node %d to node %d with total path = %lf",graph_grid[id_ind][0].ID,graph_grid[id_ind][ind].ID,start + graph_grid[id_ind][ind].friendship_dist);
+      id_list[node_ind] = graph_grid[id_ind][ind].ID;
+      printf("\n\tAdded %d to ID list",graph_grid[id_ind][ind].ID);
+      node_ind++;
+      count++;
+      send_id = find_id(graph_grid, graph_grid[id_ind][ind].ID, users);
+      dijkstras(users,start + graph_grid[id_ind][ind].friendship_dist,graph_grid,alpha,send_id,id_list,node_ind);
+    }
+  }
+  if (count == 0)
+    return;
+}
+
+int find_id(User_el ** graph_grid, int ID, int users)
+{
+  int ind;
+  for (ind = 0; ind < users; ind++)
+  {
+    if (graph_grid[ind][0].ID == ID)
+      return ind;
+  }
+  return -1;
+}
 
 char * * explode(const char * str, const char * delims, int * arrLen)
 {// it mallocs for you

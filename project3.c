@@ -98,7 +98,6 @@ int main(int argc, char ** argv)
   int ind2;
   double UL;
   double Lmax = 0;
-  double friendship_dist;
   for (ind = 0; ind < users; ind++)
   {
     graph_grid[ind] = malloc(sizeof(User_el) * (users + 1));
@@ -134,7 +133,7 @@ int main(int argc, char ** argv)
     
   for(ind = 0; ind < users; ind++)
   {
-    printf("\nUser #%d\n",graph_grid[ind][0]);
+    printf("\nUser #%d\n",graph_grid[ind][0].ID);
     for (ind2 = 1; ind2 < users + 1; ind2++)
     {
       printf("\tNeighbor: %d\tDistance: %lf\n",graph_grid[ind][ind2].ID,graph_grid[ind][ind2].friendship_dist);
@@ -152,18 +151,26 @@ int main(int argc, char ** argv)
 
 void display_queries(User_el ** graph_grid,double S, double alpha, int users, int node_query, double Lmax)
 {
-  printf("\nFirst displaying Friendship edges:\n\n");
+  printf("\nFirst displaying Friendship edges with S = %lf\n\n",S);
   int ind;
   int ind2;
-  
+  double L;
   for(ind = 0; ind < users; ind++)
   {
-    printf("User: %d\n",graph_grid[ind][0]);
+    printf("User: %d\n",graph_grid[ind][0].ID);
     for (ind2 = 0; ind2 < users + 1; ind2++)
     {
-      if (graph_grid[ind][ind2].friendship_dist /
-  
-  
+      L = (1 - (graph_grid[ind][ind2].friendship_dist / Lmax));
+      
+      if (L > S && graph_grid[ind][ind2].ID != graph_grid[ind][0].ID)
+	graph_grid[ind][ind2].friendship_dist = (float)((int)(L * 100)) / 100;
+      else
+	graph_grid[ind][ind2].friendship_dist = -1;
+      printf("\tNeighbor: %d\tL = %lf\tDistance: %lf\n",graph_grid[ind][ind2].ID,L,graph_grid[ind][ind2].friendship_dist);
+    }
+  }
+  printf("\n\n");
+  return;
 }
 
 // void List_push(List_network * head, int id, float UL)

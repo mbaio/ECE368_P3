@@ -11,10 +11,8 @@
 typedef struct linky
 {
   int ID;
-  float friendship_dist_1;
-  float friendship_dist_2;
-  struct linky * next;
-} List_network;
+  double friendship_dist;
+} User_el;
 
 typedef struct users
 {
@@ -31,16 +29,10 @@ typedef struct users
 
 
 
-void min_path_1(List_network **, int);
-void dist_alpha_2(List_network **, int, float);
-void direct_conn_3(List_network **,int);
-void hop_2_3(List_network **, int);
-void avg_deg_4(List_network **, int);
-void avg_2nd_5(List_network **, int);
 char * * explode(const char *, const char *, int *);
-List_network * create_network(int, float);
-void List_push(List_network * head, int id, float UL);
-void display_queries(List_network **,float, float,int,int);
+//List_network * create_network(int, float);
+//void List_push(List_network * head, int id, float UL);
+void display_queries(User_el **,double, double,int,int);
 
 
 int main(int argc, char ** argv)
@@ -56,12 +48,14 @@ int main(int argc, char ** argv)
   
   // Getting Starting info
   fgets(line,bufflen,fptr);
+  
   exploded_line = explode(line,delims,&arr_len);
   int users = atoi(exploded_line[0]);
-  float S1 = atof(exploded_line[1]);
-  float S2 = atof(exploded_line[2]);
+  double S1 = atof(exploded_line[1]);
+  double S2 = atof(exploded_line[2]);
   int node_query = atoi(exploded_line[3]);
-  float alpha = atof(exploded_line[4]);
+  double alpha = atof(exploded_line[4]);
+ 
   for (ind = 0; ind < 5; ind++)
   {
     free(exploded_line[ind]);
@@ -70,10 +64,10 @@ int main(int argc, char ** argv)
   
   int user_index = 0;
   User * user_arr = malloc(sizeof(User) * users);
-  List_network ** list = malloc(sizeof(List_network *) * users);
+  User_el ** graph_grid = malloc(sizeof(User_el *) * users);
   
   // Getting User ID's
-  while (fgets(line,bufflen,fptr) != NULL)
+  while (fgets(line,bufflen,fptr))
   {
     exploded_line = explode(line,delims,&arr_len);
     user_arr[user_index].ID = atoi(exploded_line[0]);
@@ -90,6 +84,7 @@ int main(int argc, char ** argv)
       free(exploded_line[ind]);
     }
     free(exploded_line); 
+    
     user_index++;
   }
   for(ind = 0; ind < users; ind++)
@@ -101,13 +96,14 @@ int main(int argc, char ** argv)
   // Build Network
   int sum = 0;
   int ind2;
-  float UL;
-  float Lmax = 0;
-  float friendship_dist;
+  double UL;
+  double Lmax = 0;
+  double friendship_dist;
   for (ind = 0; ind < users; ind++)
   {
-    List_network * node = create_network(user_arr[ind].ID,0);
-    list[ind] = node;
+    graph_grid[ind] = malloc(sizeof(User_el) * (users + 1));
+    graph_grid[ind][0].ID = user_arr[ind].ID;
+    graph_grid[ind][0].friendship_dist = 0;
     
     for (ind2 = 0; ind2 < users; ind2++)
     {
@@ -123,11 +119,12 @@ int main(int argc, char ** argv)
        UL = sqrt(sum);
        if (Lmax < UL)
 	 Lmax = UL;
-       List_push(list[ind],user_arr[ind2].ID,UL);
+       graph_grid[ind][ind2 + 1].ID = user_arr[ind2].ID;
+       graph_grid[ind][ind2 + 1].friendship_dist = UL;
     }
   }
-  float s_dense;
-  float s_sparse;
+  double s_dense;
+  double s_sparse;
   if (S1 <= S2) {
     s_dense = S1;
     s_sparse = S2; }
@@ -135,45 +132,55 @@ int main(int argc, char ** argv)
     s_dense = S2;
     s_sparse = S1; }
     
-  printf("\nDisplaying Queries 1-6 for a Dense representation of this Social Network...\n");
-  display_queries(List,s_dense, alpha, users, node_query);
-  printf("\nDisplaying Queries 1-6 for a Sparse representation of this Social Network...\n");
-  display_queries(list,s_sparse, alpha, users, node_query);
+  for(ind = 0; ind < users; ind++)
+  {
+    printf("\nUser #%d\n",graph_grid[ind][0]);
+    for (ind2 = 1; ind2 < users + 1; ind2++)
+    {
+      printf("\tNeighbor: %d\tDistance: %lf\n",graph_grid[ind][ind2].ID,graph_grid[ind][ind2].friendship_dist);
+    }
+  }
+  printf("Lmax = %lf\n",Lmax);
+    
+   printf("\nDisplaying Queries 1-6 for a Dense representation of this Social Network...\n");
+   display_queries(graph_grid,s_dense, alpha, users, node_query);
+//   printf("\nDisplaying Queries 1-6 for a Sparse representation of this Social Network...\n");
+//   display_queries(list,s_sparse, alpha, users, node_query);
   
   return 0;
 }
 
-void display_queries(List ** list,float S, float alpha, int users, int node_query)
-{
-  
-  
-  
-  
-}
+// void display_queries(List_network ** list,float S, float alpha, int users, int node_query)
+// {
+//   printf("\nid: %d\n",list[1] -> ID);
+//   
+//   
+//   
+// }
 
-void List_push(List_network * head, int id, float UL)
-{
-        List_network * addnode = create_network(id,UL);
-        List_network * finder = head;
-	while (1) {
-	  if (finder -> next == NULL)
-	  {
-	    finder -> next = addnode;
-	    break;
-	  }
-	  finder = finder -> next;
-	}
-}
-
-List_network * create_network(int ID, float dist)
-{
-  List_network * node = malloc(sizeof(List_network));
-  node -> ID = ID;
-  node -> friendship_dist_1 = dist;
-  node -> friendship_dist_2 = 0;
-  node -> next = NULL;
-  return node;
-}
+// void List_push(List_network * head, int id, float UL)
+// {
+//         List_network * addnode = create_network(id,UL);
+//         List_network * finder = head;
+// 	while (1) {
+// 	  if (finder -> next == NULL)
+// 	  {
+// 	    finder -> next = addnode;
+// 	    break;
+// 	  }
+// 	  finder = finder -> next;
+// 	}
+// }
+// 
+// List_network * create_network(int ID, float dist)
+// {
+//   List_network * node = malloc(sizeof(List_network));
+//   node -> ID = ID;
+//   node -> friendship_dist_1 = dist;
+//   node -> friendship_dist_2 = 0;
+//   node -> next = NULL;
+//   return node;
+// }
 
 
 char * * explode(const char * str, const char * delims, int * arrLen)

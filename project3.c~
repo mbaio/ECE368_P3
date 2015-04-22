@@ -30,8 +30,6 @@ typedef struct users
 
 
 char * * explode(const char *, const char *, int *);
-//List_network * create_network(int, float);
-//void List_push(List_network * head, int id, float UL);
 void display_queries(User_el **,double, double,int,int,double);
 
 
@@ -170,32 +168,41 @@ void display_queries(User_el ** graph_grid,double S, double alpha, int users, in
     }
   }
   printf("\n\n");
+  
+  //Query #1
+  printf("\n===== Query #1 ======\n");
+  User_el * node_list = malloc(sizeof(User_el) * users);
+  double shortest_dist = 10000000000;
+  int id_ind;
+  int node_ind = 0;
+  for(id_ind = 0; id_ind < users; id_ind++)
+  {
+    if (graph_grid[id_ind][0].ID == node_query)
+      break;
+  }
+  for(ind = 0; ind < users; ind++)
+  {
+    if (graph_grid[id_ind][ind].friendship_dist != -1 && shortest_dist > graph_grid[id_ind][ind].friendship_dist)
+    {
+      shortest_dist = graph_grid[id_ind][ind].friendship_dist;
+      node_list[node_ind].friendship_dist = graph_grid[id_ind][ind].friendship_dist;
+      node_list[node_ind].ID = graph_grid[id_ind][ind].ID;
+      node_ind++;
+    }
+  }
+  printf("\n\tShortest Distance: %lf\n",shortest_dist);
+  for(ind = 0; ind < users; ind++)
+  {
+    if (graph_grid[id_ind][ind].friendship_dist == shortest_dist)
+    {
+      printf("\t\tID: %d\n",graph_grid[id_ind][ind].ID);
+    }
+  }
+  printf("\n\n");
+      
   return;
 }
 
-// void List_push(List_network * head, int id, float UL)
-// {
-//         List_network * addnode = create_network(id,UL);
-//         List_network * finder = head;
-// 	while (1) {
-// 	  if (finder -> next == NULL)
-// 	  {
-// 	    finder -> next = addnode;
-// 	    break;
-// 	  }
-// 	  finder = finder -> next;
-// 	}
-// }
-// 
-// List_network * create_network(int ID, float dist)
-// {
-//   List_network * node = malloc(sizeof(List_network));
-//   node -> ID = ID;
-//   node -> friendship_dist_1 = dist;
-//   node -> friendship_dist_2 = 0;
-//   node -> next = NULL;
-//   return node;
-// }
 
 
 char * * explode(const char * str, const char * delims, int * arrLen)

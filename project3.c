@@ -6,7 +6,7 @@
 #include <math.h>
 
 
-#define BUFFLEN 100
+#define BUFFLEN 1000000000
 
 typedef struct linky
 {
@@ -205,37 +205,48 @@ void display_queries(User_el ** graph_grid,double S, double alpha, int users, in
   }
   printf("\n");
   
-  printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
-  int count = 0;
-  int node_list2[BUFFLEN] = {0};
-  dijkstras(users, 0, graph_grid,alpha,id_ind,node_list2,0);
+//   printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
+//   int count = 0;
+//   int node_list2[BUFFLEN] = {0};
+//   dijkstras(users, 0, graph_grid,alpha,id_ind,node_list2,0);
+//   
+//   qsort(node_list2,BUFFLEN,sizeof(int),cmpfnc);
+//   int current = node_list2[0];
+//   //printf("\n\nFirst element of id list: %d",node_list2[0]);
+//   int new;
+//   for(ind = 1; ind < BUFFLEN; ind++)
+//   {
+//     new = node_list2[ind];
+//     if(current != new){
+//       count++;
+//       current = new; }
+//     //printf("\nind = %d el = %d",ind,node_list2[ind]);
+//     if (node_list2[ind] == 0)
+//       break;
+//     
+//     
+//   }
+//   printf("\n\tCount = %d\n\n",count);
   
-  for(ind = 0; ind < BUFFLEN; ind++)
+  printf("\n========= Query #3 ==========\n");
+  count = 0;
+  for (ind = 1; ind < users + 1; ind++)
   {
-    printf("\nind = %d el = %d",ind,node_list2[ind]);
-  }
-  
-  
-  qsort(node_list2,BUFFLEN,sizeof(int),cmpfnc);
-  int current = node_list2[0];
-  printf("\n\nFirst element of id list: %d",node_list2[0]);
-  int new;
-  for(ind = 1; ind < BUFFLEN; ind++)
-  {
-    new = node_list2[ind];
-    if(current != new){
+    if (graph_grid[id_ind][ind].friendship_dist != -1)
+    {
       count++;
-      current = new; }
-    printf("\nind = %d el = %d",ind,node_list2[ind]);
-    if (node_list2[ind] == 0)
-      break;
-    
-    
+    }
   }
-  printf("\tCount = %d\n\n",count);
+  printf("\n\tCount: %d\n",count);
+  for (ind = 1; ind < users + 1; ind++)
+  {
+    if (graph_grid[id_ind][ind].friendship_dist != -1)
+    {
+      printf("\n\t\tID: %d",graph_grid[id_ind][ind].ID);
+    }
+  }  
+  printf("\n========= Query #4 ==========\n");    
   
-      
-  return;
 }
 
 int cmpfnc(const void * a,const void * b)
@@ -251,9 +262,9 @@ void dijkstras(int users, double start, User_el ** graph_grid, double alpha, int
   for (ind = 1; ind < users + 1; ind++)
   {
     if (start + graph_grid[id_ind][ind].friendship_dist < alpha && graph_grid[id_ind][ind].friendship_dist != -1) {
-      printf("\nStarted at node %d to node %d with total path = %lf",graph_grid[id_ind][0].ID,graph_grid[id_ind][ind].ID,start + graph_grid[id_ind][ind].friendship_dist);
+      //printf("\nStarted at node %d to node %d with total path = %lf",graph_grid[id_ind][0].ID,graph_grid[id_ind][ind].ID,start + graph_grid[id_ind][ind].friendship_dist);
       id_list[node_ind] = graph_grid[id_ind][ind].ID;
-      printf("\n\tAdded %d to ID list",graph_grid[id_ind][ind].ID);
+     // printf("\n\tAdded %d to ID list",graph_grid[id_ind][ind].ID);
       node_ind++;
       count++;
       send_id = find_id(graph_grid, graph_grid[id_ind][ind].ID, users);

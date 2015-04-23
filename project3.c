@@ -179,36 +179,36 @@ void display_queries(double ** graph_grid,double S, double alpha, int users, int
   }
   printf("\n\n");
   
-//   //Query #1
-//   printf("\n========= Query #1 ==========\n");
-//   User_el * node_list = malloc(sizeof(User_el) * users);
-//   double shortest_dist = 10000000000;
-//   int id_ind;
-//   int node_ind = 0;
+  //Query #1
+  printf("\n========= Query #1 ==========\n");
+  //User_el * node_list = malloc(sizeof(User_el) * users);
+  int * id_list = malloc(sizeof(int) * users);
+  int shortest_dist = 65535;
+  int id_ind = node_query - 1;
+  int node_ind = 0;
 //   for(id_ind = 0; id_ind < users; id_ind++)
 //   {
 //     if (graph_grid[id_ind][0].ID == node_query)
 //       break;
 //   }
-//   for(ind = 1; ind < users + 1; ind++)
-//   {
-//     if (graph_grid[id_ind][ind].friendship_dist != -1 && shortest_dist > graph_grid[id_ind][ind].friendship_dist)
-//     {
-//       shortest_dist = graph_grid[id_ind][ind].friendship_dist;
-//       node_list[node_ind].friendship_dist = graph_grid[id_ind][ind].friendship_dist;
-//       node_list[node_ind].ID = graph_grid[id_ind][ind].ID;
-//       node_ind++;
-//     }
-//   }
-//   printf("\nShortest Distance: %lf\n",shortest_dist);
-//   for(ind = 1; ind < users + 1; ind++)
-//   {
-//     if (graph_grid[id_ind][ind].friendship_dist == shortest_dist)
-//     {
-//       printf("\tID: %d\n",graph_grid[id_ind][ind].ID);
-//     }
-//   }
-//   printf("\n");
+  int id_found;
+  for(ind = 0; ind < users; ind++)
+  {
+    if (graph_grid[id_ind][ind] != -1 && shortest_dist > graph_grid[id_ind][ind])
+    {
+      shortest_dist = (int) graph_grid[id_ind][ind];
+    }
+  }
+  
+  printf("\nShortest Distance: %.2lf\n",(double) shortest_dist / 100);
+  for(ind = 0; ind < users; ind++)
+  {
+    if ((int)graph_grid[id_ind][ind] == shortest_dist)
+    {
+      printf("\tID: %d\n",ind + 1);
+    }
+  }
+  printf("\n");
 //   
 // 
 //   printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT

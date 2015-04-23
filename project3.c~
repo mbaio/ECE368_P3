@@ -31,7 +31,7 @@ typedef struct users
 
 char * * explode(const char *, const char *, int *);
 void display_queries(double **,double, double,int,int,double);
-void dijkstras(int, double, User_el **,double,int,int *,int);
+void dijkstras(int, int, double **,int,int,int *,int);
 int find_id(User_el ** graph_grid, int ID, int);
 int cmpfnc(const void * a,const void * b);
 int cmpfnc2(const void * a,const void * b);
@@ -182,7 +182,7 @@ void display_queries(double ** graph_grid,double S, double alpha, int users, int
   //Query #1
   printf("\n========= Query #1 ==========\n");
   //User_el * node_list = malloc(sizeof(User_el) * users);
-  int * id_list = malloc(sizeof(int) * users);
+  
   int shortest_dist = 65535;
   int id_ind = node_query - 1;
   int node_ind = 0;
@@ -209,107 +209,74 @@ void display_queries(double ** graph_grid,double S, double alpha, int users, int
     }
   }
   printf("\n");
-//   
-// 
-//   printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
-//    int count = 0;
-//    int node_list2[100] = {0};
-//   dijkstras(users, 0, graph_grid,alpha,id_ind,node_list2,0);
-//   
-//   qsort(node_list2,BUFFLEN,sizeof(int),cmpfnc);
-//   int current = node_list2[0];
-//   //printf("\n\nFirst element of id list: %d",node_list2[0]);
-//   int new;
-//   for(ind = 1; ind < BUFFLEN; ind++)
-//   {
-//     new = node_list2[ind];
-//     if(current != new){
-//       count++;
-//       current = new; }
-//     //printf("\nind = %d el = %d",ind,node_list2[ind]);
-//     if (node_list2[ind] == 0)
-//       break;
-//     
-//     
-//   }
-//   printf("\n\tCount = %d\n\n",count);
   
-//   printf("\n========= Query #3 ==========\n");
-//   count = 0;
-//   memset(node_list2, 0, sizeof(int) * BUFFLEN);
-//   node_ind = 0;
-//   for (ind = 1; ind < users + 1; ind++)
-//   {
-//     if (graph_grid[id_ind][ind].friendship_dist != -1)
-//     {
-//       count++;
-//       node_list2[node_ind] = graph_grid[id_ind][ind].ID;
-//       node_ind++;
-//     }
-//   }
-//   printf("\n\tCount: %d\n",count);
-//   for (ind = 1; ind < users + 1; ind++)
-//   {
-//     if (graph_grid[id_ind][ind].friendship_dist != -1)
-//     {
-//       printf("\n\t\tID: %d",graph_grid[id_ind][ind].ID);
-//     }
-//   }  
-//   
-//   printf("\n========= Query #4 ==========\n");  // find if 2 hop counts as self  
-//   count = 0;
-//   //node_list2[BUFFLEN] = {0};
-//   int node_list3[BUFFLEN] = {0};
-//   node_ind = 0;
-//   int node_ind2 = 0;
-//   for (ind = 0; ind < count; ind++)
-//   {
-//     for(ind2 = 1; ind2 < users + 1; ind2++)
-//     {
-//       if (graph_grid[node_list2[ind]][ind2].friendship_dist != -1) {
-// 	node_list3[node_ind2] = graph_grid[node_list2[ind]][ind2].ID;
-// 	node_ind2++;
-//       }
-//     }
-//   }
-//   qsort(node_list3,BUFFLEN,sizeof(int),cmpfnc);
-//     int current = node_list3[0];
-//   //printf("\n\nFirst element of id list: %d",node_list2[0]);
-//   int new;
-//   for(ind = 1; ind < BUFFLEN; ind++)
-//   {
-//     new = node_list3[ind];
-//     if(current != new){
-//       count++;
-//       current = new; }
-//     //printf("\nind = %d el = %d",ind,node_list2[ind]);
-//     if (node_list3[ind] == 0)
-//       break;
-//   }
-//   
-//   printf("\n\tCount: %d",count);
-//   int * ID_arr = malloc(sizeof(int) * count);
-//   node_ind = 0;
-//   current = node_list3[0];
-//   ID_arr[node_ind] = current;
-//   node_ind++;
-// 
-//   for(ind = 1; ind < BUFFLEN; ind++)
-//   {
-//     new = node_list3[ind];
-//     if(current != new){
-//       ID_arr[node_ind] = node_list3[ind];
-//       node_ind++;
-//       current = new; }
-//     //printf("\nind = %d el = %d",ind,node_list2[ind]);
-//     if (node_list3[ind] == 0)
-//       break;
-//   }
-//   qsort(ID_arr,BUFFLEN,sizeof(int),cmpfnc2);
-//   for(ind = 0; ind < count; ind++)
-//   {
-//     printf("\n\tID: %d",ID_arr[ind]);
-//   }
+  printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
+  int count = 0;
+  int * id_list = malloc(sizeof(int) * users);
+  memset(id_list,0,sizeof(int) * users); 
+  
+  dijkstras(users, 0, graph_grid,(int)(alpha * 100),id_ind,id_list,-1);
+  
+  //qsort(node_list2,BUFFLEN,sizeof(int),cmpfnc);
+  //int current = node_list2[0];
+  //printf("\n\nFirst element of id list: %d",node_list2[0]);
+  //int new;
+  for(ind = 0; ind < users; ind++)
+  {
+    if (id_list[ind] == 1 && ind != id_ind) {
+      printf("\nnode path less than alpha: %d",ind + 1);
+      count++; }
+  }
+  printf("\n\tCount = %d\n\n",count);
+  
+  printf("\n========= Query #3 ==========\n");
+  count = 0;
+  memset(id_list,0,sizeof(int) * users); 
+  for (ind = 0; ind < users; ind++)
+  {
+    if (graph_grid[id_ind][ind] != -1)
+    {
+      count++;
+    }
+  }
+  printf("\n\tCount: %d\n",count);
+  for (ind = 0; ind < users; ind++)
+  {
+    if (graph_grid[id_ind][ind] != -1)
+    {
+      printf("\n\tID: %d",ind + 1);
+      id_list[ind] = 1;
+    }
+  }  
+
+  printf("\n========= Query #4 ==========\n");  // find if 2 hop counts as self  
+  int * id_list_2 = malloc(sizeof(int) * users);
+  memset(id_list_2,0,sizeof(int) * users);
+  count = 0;
+  
+  for(ind = 0; ind < users; ind++)
+  {
+    if (id_list[ind] == 1)
+    {
+      for(ind2 = 0; ind2 < users; ind2++)
+      {
+	if (graph_grid[ind][ind2] != -1)
+	  id_list_2[ind2] = 1;
+      }
+    }
+  }
+  for(ind = 0; ind < users; ind++)
+  {
+    if (id_list_2[ind] == 1 && ind != id_ind)
+      count++
+  }
+  printf("\n\tCount = %d",count);
+  for(ind = 0; ind < users; ind++)
+  {
+    if (id_list_2[ind] == 1 && ind != id_ind)
+      printf("\n\tID: %d",ind + 1);
+  }
+  
   return;
 }
 
@@ -322,21 +289,21 @@ int cmpfnc2(const void * a,const void * b)
 {
   return(*(int *)a - *(int*)b );
 }
-void dijkstras(int users, double start, User_el ** graph_grid, double alpha, int id_ind, int * id_list, int node_ind)
+void dijkstras(int users, int start, double ** graph_grid, int alpha, int id_ind, int * id_list, int before_id)
 {
   int ind;
   int count = 0;
-  int send_id;
-  for (ind = 1; ind < users + 1; ind++)
+  
+  for (ind = 0; ind < users; ind++)
   {
-    if (start + graph_grid[id_ind][ind].friendship_dist < alpha && graph_grid[id_ind][ind].friendship_dist != -1) {
+    if (start + (int)(graph_grid[id_ind][ind]) < alpha && graph_grid[id_ind][ind] != -1 && id_ind != before_id ) {
       //printf("\nStarted at node %d to node %d with total path = %lf",graph_grid[id_ind][0].ID,graph_grid[id_ind][ind].ID,start + graph_grid[id_ind][ind].friendship_dist);
-      id_list[node_ind] = graph_grid[id_ind][ind].ID;
+      id_list[ind] = 1;
      // printf("\n\tAdded %d to ID list",graph_grid[id_ind][ind].ID);
-      node_ind++;
+      
       count++;
-      send_id = find_id(graph_grid, graph_grid[id_ind][ind].ID, users);
-      dijkstras(users,start + graph_grid[id_ind][ind].friendship_dist,graph_grid,alpha,send_id,id_list,node_ind);
+      //send_id = find_id(graph_grid, graph_grid[id_ind][ind].ID, users);
+      dijkstras(users,start + (int)(graph_grid[id_ind][ind]),graph_grid,alpha,ind,id_list,id_ind);
     }
   }
   if (count == 0)

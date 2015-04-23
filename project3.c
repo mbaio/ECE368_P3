@@ -6,7 +6,7 @@
 #include <math.h>
 
 
-#define BUFFLEN 1000000000
+#define BUFFLEN 1050
 
 typedef struct linky
 {
@@ -143,7 +143,7 @@ int cmpfnc2(const void * a,const void * b);
     }
   }
   printf("Lmax = %lf\n",Lmax);
-    double S = s_dense;
+    
    printf("\nDisplaying Queries 1-6 for a Dense representation of this Social Network...\n");
    display_queries(graph_grid,s_dense, alpha, users, node_query,Lmax);
 //   printf("\nDisplaying Queries 1-6 for a Sparse representation of this Social Network...\n");
@@ -205,29 +205,29 @@ void display_queries(User_el ** graph_grid,double S, double alpha, int users, in
   }
   printf("\n");
   
-}
-//   printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
+
+  printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
    int count = 0;
-   int node_list2[BUFFLEN] = {0};
-//   dijkstras(users, 0, graph_grid,alpha,id_ind,node_list2,0);
-//   
-//   qsort(node_list2,BUFFLEN,sizeof(int),cmpfnc);
-//   int current = node_list2[0];
-//   //printf("\n\nFirst element of id list: %d",node_list2[0]);
-//   int new;
-//   for(ind = 1; ind < BUFFLEN; ind++)
-//   {
-//     new = node_list2[ind];
-//     if(current != new){
-//       count++;
-//       current = new; }
-//     //printf("\nind = %d el = %d",ind,node_list2[ind]);
-//     if (node_list2[ind] == 0)
-//       break;
-//     
-//     
-//   }
-//   printf("\n\tCount = %d\n\n",count);
+   int node_list2[100] = {0};
+  dijkstras(users, 0, graph_grid,alpha,id_ind,node_list2,0);
+  
+  qsort(node_list2,BUFFLEN,sizeof(int),cmpfnc);
+  int current = node_list2[0];
+  //printf("\n\nFirst element of id list: %d",node_list2[0]);
+  int new;
+  for(ind = 1; ind < BUFFLEN; ind++)
+  {
+    new = node_list2[ind];
+    if(current != new){
+      count++;
+      current = new; }
+    //printf("\nind = %d el = %d",ind,node_list2[ind]);
+    if (node_list2[ind] == 0)
+      break;
+    
+    
+  }
+  printf("\n\tCount = %d\n\n",count);
   
 //   printf("\n========= Query #3 ==========\n");
 //   count = 0;
@@ -305,8 +305,8 @@ void display_queries(User_el ** graph_grid,double S, double alpha, int users, in
 //   {
 //     printf("\n\tID: %d",ID_arr[ind]);
 //   }
-
-//}
+  return;
+}
 
 int cmpfnc(const void * a,const void * b)
 {

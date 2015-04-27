@@ -33,10 +33,6 @@ char * * explode(const char *, const char *, int *);
 void display_queries(double **,double, double,int,int,double);
 void dijkstras(int, int, double **,int,int,int *,int);
 int find_id(User_el ** graph_grid, int ID, int);
-int cmpfnc(const void * a,const void * b);
-int cmpfnc2(const void * a,const void * b);
-
-
 
   int main(int argc, char ** argv)
 {
@@ -70,7 +66,7 @@ int cmpfnc2(const void * a,const void * b);
   
   //User_el ** graph_grid = malloc(sizeof(User_el *) * users);
   double ** graph_grid = malloc(sizeof(double *) * users);
-  
+  double ** graph_grid2 = malloc(sizeof(double *) * users);
   // Getting User ID's
   while (fgets(line,BUFFLEN,fptr))
   {
@@ -92,11 +88,11 @@ int cmpfnc2(const void * a,const void * b);
     
     user_index++;
   }
-  for(ind = 0; ind < users; ind++)
-  {
-    printf("ID: %d, age: %d, gender: %d, martial: %d, race: %d, birth: %d, lang: %d, occ: %d, income: %d\n", user_arr[ind].ID,user_arr[ind].age,user_arr[ind].gender,user_arr[ind].martial,user_arr[ind].race,user_arr[ind].birth,user_arr[ind].lang,user_arr[ind].occ,user_arr[ind].income);
-  }
-  printf("\n");
+//   for(ind = 0; ind < users; ind++)
+//   {
+//     printf("ID: %d, age: %d, gender: %d, martial: %d, race: %d, birth: %d, lang: %d, occ: %d, income: %d\n", user_arr[ind].ID,user_arr[ind].age,user_arr[ind].gender,user_arr[ind].martial,user_arr[ind].race,user_arr[ind].birth,user_arr[ind].lang,user_arr[ind].occ,user_arr[ind].income);
+//   }
+//   printf("\n");
   
   // Build Network
   int sum = 0;
@@ -107,6 +103,7 @@ int cmpfnc2(const void * a,const void * b);
   {
     //graph_grid[ind] = malloc(sizeof(User_el) * (users + 1));
     graph_grid[ind] = malloc(sizeof(double) * (users));
+    graph_grid2[ind] = malloc(sizeof(double) * (users));
     //graph_grid[ind][0].ID = user_arr[ind].ID;
     //graph_grid[ind][0].friendship_dist = 0;
     
@@ -126,6 +123,7 @@ int cmpfnc2(const void * a,const void * b);
 	 Lmax = UL;
        //graph_grid[ind][ind2 + 1].ID = user_arr[ind2].ID;
        graph_grid[ind][ind2] = UL;
+       graph_grid2[ind][ind2] = UL;
     }
   }
   double s_dense;
@@ -137,35 +135,37 @@ int cmpfnc2(const void * a,const void * b);
     s_dense = S2;
     s_sparse = S1; }
     
-  for(ind = 0; ind < users; ind++)
-  {
-    printf("\nUser #%d\n",ind+1);
-    for (ind2 = 0; ind2 < users; ind2++)
-    {
-      printf("\tNeighbor: %d\tDistance: %lf\n",ind2 + 1,graph_grid[ind][ind2]);
-    }
-  }
-  printf("Lmax = %lf\n",Lmax);
+//   for(ind = 0; ind < users; ind++)
+//   {
+//     printf("\nUser #%d\n",ind+1);
+//     for (ind2 = 0; ind2 < users; ind2++)
+//     {
+//       printf("\tNeighbor: %d\tDistance: %lf\n",ind2 + 1,graph_grid[ind][ind2]);
+//     }
+//   }
+ // printf("Lmax = %lf\n",Lmax);
+   
     
-   printf("\nDisplaying Queries 1-6 for a Dense representation of this Social Network...\n");
+   //printf("\nDisplaying Queries 1-6 for a Dense representation of this Social Network...\n");
    display_queries(graph_grid,s_dense, alpha, users, node_query,Lmax);
-//   printf("\nDisplaying Queries 1-6 for a Sparse representation of this Social Network...\n");
-//   display_queries(list,s_sparse, alpha, users, node_query);
-  
+   printf("\n\n");
+   //printf("\nDisplaying Queries 1-6 for a Sparse representation of this Social Network...\n");
+   display_queries(graph_grid2,s_sparse, alpha, users, node_query,Lmax);
+   //printf("\n");
   return 0;
 }
 
 void display_queries(double ** graph_grid,double S, double alpha, int users, int node_query, double Lmax)
 {
-  printf("\nFirst displaying Friendship edges with S = %lf\n\n",S);
+  //printf("\nFirst displaying Friendship edges with S = %lf\n\n",S);
   int ind;
   int ind2;
   double L;
   int int_s = (int) (S * 100);
-  printf("\nint_s = %d\n",int_s);
+ //printf("\nint_s = %d\n",int_s);
   for(ind = 0; ind < users; ind++)
   {
-    printf("User: %d\n",ind + 1);
+    //printf("User: %d\n",ind + 1);
     for (ind2 = 0; ind2 < users; ind2++)
     {
       L = (1 - (graph_grid[ind][ind2] / Lmax));
@@ -174,24 +174,24 @@ void display_queries(double ** graph_grid,double S, double alpha, int users, int
 	graph_grid[ind][ind2] = (int)(L * 100);
       else
 	graph_grid[ind][ind2] = -1;
-      printf("\tNeighbor: %d\tL = %lf\tDistance: %d\n",ind2 + 1,L,(int)graph_grid[ind][ind2]);
+      //printf("\tNeighbor: %d\tL = %lf\tDistance: %d\n",ind2 + 1,L,(int)graph_grid[ind][ind2]);
     }
   }
-  printf("\n\n");
+  //printf("\n\n");
   
   //Query #1
-  printf("\n========= Query #1 ==========\n");
+  //printf("\n========= Query #1 ==========\n");
   //User_el * node_list = malloc(sizeof(User_el) * users);
   
   int shortest_dist = 65535;
   int id_ind = node_query - 1;
-  int node_ind = 0;
+  //int node_ind = 0;
 //   for(id_ind = 0; id_ind < users; id_ind++)
 //   {
 //     if (graph_grid[id_ind][0].ID == node_query)
 //       break;
 //   }
-  int id_found;
+  //int id_found;
   for(ind = 0; ind < users; ind++)
   {
     if (graph_grid[id_ind][ind] != -1 && shortest_dist > graph_grid[id_ind][ind])
@@ -200,17 +200,17 @@ void display_queries(double ** graph_grid,double S, double alpha, int users, int
     }
   }
   
-  printf("\nShortest Distance: %.2lf\n",(double) shortest_dist / 100);
+  printf("%.2lf",(double) shortest_dist / 100);
   for(ind = 0; ind < users; ind++)
   {
     if ((int)graph_grid[id_ind][ind] == shortest_dist)
     {
-      printf("\tID: %d\n",ind + 1);
+      printf(",%d",ind + 1);
     }
   }
   printf("\n");
   
-  printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
+  //printf("\n========= Query #2 ==========\n"); //  HAVE TO CHECK IF YOU COUNT SOURCE NODE FOR A PATH AFTER YOU GO OUT
   int count = 0;
   int * id_list = malloc(sizeof(int) * users);
   memset(id_list,0,sizeof(int) * users); 
@@ -224,12 +224,12 @@ void display_queries(double ** graph_grid,double S, double alpha, int users, int
   for(ind = 0; ind < users; ind++)
   {
     if (id_list[ind] == 1 && ind != id_ind) {
-      printf("\nnode path less than alpha: %d",ind + 1);
+      //printf("\nnode path less than alpha: %d",ind + 1);
       count++; }
   }
-  printf("\n\tCount = %d\n\n",count);
+  printf("%d\n",count);
   
-  printf("\n========= Query #3 ==========\n");
+  //printf("\n========= Query #3 ==========\n");
   count = 0;
   memset(id_list,0,sizeof(int) * users); 
   for (ind = 0; ind < users; ind++)
@@ -239,17 +239,17 @@ void display_queries(double ** graph_grid,double S, double alpha, int users, int
       count++;
     }
   }
-  printf("\n\tCount: %d\n",count);
+  printf("%d",count);
   for (ind = 0; ind < users; ind++)
   {
     if (graph_grid[id_ind][ind] != -1)
     {
-      printf("\n\tID: %d",ind + 1);
+      printf(",%d",ind + 1);
       id_list[ind] = 1;
     }
   }  
 
-  printf("\n========= Query #4 ==========\n");  // find if 2 hop counts as self  
+  //printf("\n========= Query #4 ==========\n");  // find if 2 hop counts as self  
   int * id_list_2 = malloc(sizeof(int) * users);
   memset(id_list_2,0,sizeof(int) * users);
   count = 0;
@@ -270,25 +270,67 @@ void display_queries(double ** graph_grid,double S, double alpha, int users, int
     if (id_list_2[ind] == 1 && ind != id_ind)
       count++;
   }
-  printf("\n\tCount = %d",count);
+  printf("\n%d",count);
   for(ind = 0; ind < users; ind++)
   {
     if (id_list_2[ind] == 1 && ind != id_ind)
-      printf("\n\tID: %d",ind + 1);
+      printf(",%d",ind + 1);
   }
+  
+ // printf("\n========= Query #5 ==========\n");
+ 
+  int sum = 0;
+  for(ind = 0; ind < users; ind++)
+  {
+    count = 0;
+    for(ind2 = 0; ind2 < users; ind2++)
+    {
+      if (graph_grid[ind][ind2] != -1)
+	count++;
+    }
+    sum += count;
+  }
+  printf("\n%.2lf",(double) (int)((sum * 100) / users) / 100);
+  
+  // Query 6
+  double sum_total = 0;
+  int current_sum = 0;
+  int ind3;
+  
+  for(ind = 0; ind < users; ind++)
+  {
+    current_sum = 0;
+    memset(id_list_2,0,sizeof(int) * users);
+    for(ind2 = 0; ind2 < users; ind2++)
+    {  
+      if(graph_grid[ind][ind2] != -1)
+      {
+	for(ind3 = 0; ind3 < users; ind3++)
+	{
+	  if(graph_grid[ind2][ind3] != -1 && ind3 != ind)
+	  {
+	    id_list_2[ind3] = 1;
+	  }
+	}
+      }
+    }
+   //printf("\nNode list for %d: ",ind); 
+    for(ind3 = 0; ind3 < users; ind3++)
+    {
+      //printf("%d,",id_list_2[ind3]);
+      if (id_list_2[ind3] == 1)
+      {
+	current_sum++;
+      }
+    }
+    sum_total += current_sum;
+  }
+  printf("\n%.2lf",(double) (int)((sum_total * 100) / (users)) / 100);
+    
   
   return;
 }
 
-int cmpfnc(const void * a,const void * b)
-{
-  return(*(int *)b - *(int*)a );
-}
-
-int cmpfnc2(const void * a,const void * b)
-{
-  return(*(int *)a - *(int*)b );
-}
 void dijkstras(int users, int start, double ** graph_grid, int alpha, int id_ind, int * id_list, int before_id)
 {
   int ind;

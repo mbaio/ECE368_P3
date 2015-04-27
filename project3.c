@@ -3,7 +3,9 @@
   This project tests my ability to apply Vertex and Edge graphing 
   to the C language by modeling a social network.  6 querys are then
   done to analyze the social network based on two different threshold
-  values to determine if two users are considered friends or not. */ 
+  values to determine if two users are considered friends or not. 
+  
+  -Has minor valgrind errors- structs not freed at exit */ 
   
 #include <stdio.h>
 #include <stdlib.h>
@@ -125,7 +127,8 @@ void dijkstras(int, int, double **,int,int,int *,int);
    display_queries(graph_grid,s_dense, alpha, users, node_query,Lmax);
    printf("\n\n");
    display_queries(graph_grid2,s_sparse, alpha, users, node_query,Lmax);
-  return 0;
+   fclose(fptr);
+   return 0;
 }
 
 void display_queries(double ** graph_grid,double S, double alpha, int users, int node_query, double Lmax)

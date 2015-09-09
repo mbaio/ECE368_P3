@@ -1,0 +1,7 @@
+This project is explained also at the top of project3.c, but essentially
+it simulates a social network by using vertex and edge graphing and 
+using the strength of a "friendship" by comparing the differences of 
+qualities that exist of properties from each person. 
+
+The code is ran by running <project3 "input_file"> which gives an output 
+analysis.
